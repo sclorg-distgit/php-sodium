@@ -1,7 +1,14 @@
-# Package php-pecl-xdebug for Software Collections
+# Package php-sodium for Software Collections
 
 This repository contains sources for RPMs that are used
 to build Software Collections for CentOS by SCLo SIG.
 
-See branches related to PHP versions
+This branch is for libsodium-devel, dependency of php-sodium
+This package only build the static library, only for EL-7
+
+    build -bs *spec --define "dist .el7"
+    cbs add-pkg    sclo7-sclo-php72-sclo-candidate --owner=sclo  libsodium
+
+    cbs build      sclo7-sclo-php72-sclo-el7       <above>.src.rpm
+
 
