@@ -1,0 +1,46 @@
+From 8ead77936e68554d47033c5c90d2c48d96db0212 Mon Sep 17 00:00:00 2001
+From: "Christoph M. Becker" <cmbecker69@gmx.de>
+Date: Mon, 9 Sep 2019 15:30:28 +0200
+Subject: [PATCH] Fix #78510: Partially uninitialized buffer returned by
+ sodium_crypto_generichash_init()
+
+Backport jedisct1/libsodium.php@28d13bf437cb969a0583031fc7ac54c5a8dc8116.
+---
+ NEWS                           |  4 ++++
+ ext/sodium/libsodium.c         |  1 +
+ ext/sodium/tests/bug78510.phpt | 14 ++++++++++++++
+ 3 files changed, 19 insertions(+)
+ create mode 100644 ext/sodium/tests/bug78510.phpt
+
+diff --git a/ext/sodium/libsodium.c b/ext/sodium/libsodium.c
+index f7b3ea4dcae3..584a918b6ead 100644
+--- a/ext/sodium/libsodium.c
++++ b/ext/sodium/libsodium.c
+@@ -934,6 +934,7 @@ PHP_FUNCTION(sodium_crypto_generichash_init)
+ 		zend_throw_exception(sodium_exception_ce, "unsupported key length", 0);
+ 		return;
+ 	}
++	memset(&state_tmp, 0, sizeof state_tmp);
+ 	if (crypto_generichash_init((void *) &state_tmp, key, (size_t) key_len,
+ 								(size_t) hash_len) != 0) {
+ 		zend_throw_exception(sodium_exception_ce, "internal error", 0);
+diff --git a/ext/sodium/tests/bug78510.phpt b/ext/sodium/tests/bug78510.phpt
+new file mode 100644
+index 000000000000..dc7e47842490
+--- /dev/null
++++ b/ext/sodium/tests/bug78510.phpt
+@@ -0,0 +1,14 @@
++--TEST--
++Bug #78510 (Partially uninitialized buffer returned by sodium_crypto_generichash_init())
++--SKIPIF--
++<?php
++if (!extension_loaded("sodium")) print "skip extension not loaded";
++?>
++--FILE--
++<?php
++$key = hex2bin('36be2998c85757e98c1abf3687c8db3a849a393701c05454023d9aba1096fd47');
++$y = sodium_crypto_generichash_init($key, 64);
++var_dump(bin2hex($y));
++?>
++--EXPECT--
++string(768) "48e9bdf267e6096a3ba7ca8485ae67bb2bf894fe72f36e3cf1361d5f3af54fa5d182e6ad7f520e511f6c3e2b8c68059b6bbd41fbabd9831f79217e1319cde05b000000000000000000000000000000000000000000000000000000000000000036be2998c85757e98c1abf3687c8db3a849a393701c05454023d9aba1096fd4700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000"

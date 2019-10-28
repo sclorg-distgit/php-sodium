@@ -19,8 +19,10 @@
 Name:           %{?sub_prefix}php-%{pecl_name}
 Summary:        Wrapper for the Sodium cryptographic library
 Version:        7.3.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Source0:        http://www.php.net/distributions/php-%{version}.tar.xz
+
+Patch0:         php-bug-78510.patch
 
 License:        PHP
 Group:          Development/Languages
@@ -45,6 +47,7 @@ low-level PHP extension for the libsodium cryptographic library.
 
 %prep
 %setup -q -n php-%{version}
+%patch0 -p1
 
 # Fix reported version
 sed -e '/PHP_SODIUM_VERSION/s/PHP_VERSION/"%{version}"/' \
@@ -101,6 +104,10 @@ make test
 
 
 %changelog
+* Mon Oct 28 2019 Remi Collet <remi@remirepo.net> - 7.3.7-2
+- fix partially uninitialized buffer returned by sodium_crypto_generichash_init
+  see https://bugs.php.net/78510
+
 * Mon Oct 28 2019 Remi Collet <remi@remirepo.net> - 7.3.7-1
 - update to 7.3.7 for sclo-php73
 
