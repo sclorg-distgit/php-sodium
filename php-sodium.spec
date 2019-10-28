@@ -1,17 +1,13 @@
 # centos/sclo spec file for php-sodium
 #
-# Copyright (c) 2018 Remi Collet
+# Copyright (c) 2018-2019 Remi Collet
 # License: CC-BY-SA
 # http://creativecommons.org/licenses/by-sa/4.0/
 #
 # Please, preserve the changelog entries
 #
 %if 0%{?scl:1}
-%if "%{scl}" == "rh-php72"
-%global sub_prefix sclo-php72-
-%else
-%global sub_prefix %{scl_prefix}
-%endif
+%global sub_prefix sclo-php73-
 %scl_package        php-sodium
 %else
 %global pkg_name    %{name}
@@ -22,7 +18,7 @@
 
 Name:           %{?sub_prefix}php-%{pecl_name}
 Summary:        Wrapper for the Sodium cryptographic library
-Version:        7.2.12
+Version:        7.3.7
 Release:        1%{?dist}
 Source0:        http://www.php.net/distributions/php-%{version}.tar.xz
 
@@ -30,7 +26,7 @@ License:        PHP
 Group:          Development/Languages
 URL:            http://php.net/%{pecl_name}
 
-BuildRequires:  %{?scl_prefix}php-devel >= 7.2.10
+BuildRequires:  %{?scl_prefix}php-devel >= 7.3
 BuildRequires:  libsodium-devel  >= 1.0.8
 
 %if "%{?scl_prefix}" != "%{?sub_prefix}"
@@ -105,6 +101,9 @@ make test
 
 
 %changelog
+* Mon Oct 28 2019 Remi Collet <remi@remirepo.net> - 7.3.7-1
+- update to 7.3.7 for sclo-php73
+
 * Thu Nov 15 2018 Remi Collet <remi@remirepo.net> - 7.2.12-1
 - version 7.2.12 for sclo-php72
 
