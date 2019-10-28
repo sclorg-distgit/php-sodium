@@ -9,12 +9,14 @@
 %global soname  23
 
 Name:           libsodium
-Version:        1.0.16
+Version:        1.0.18
 Release:        0%{?dist}
 Summary:        The Sodium crypto library
 License:        ISC
 URL:            http://libsodium.org/
 Source0:        http://download.libsodium.org/libsodium/releases/%{name}-%{version}.tar.gz
+
+BuildRequires: gcc
 
 # manage update from 3rd party repository
 Obsoletes:      %{libname}%{soname} <= %{version}
@@ -98,6 +100,9 @@ make check
 
 
 %changelog
+* Mon Oct 28 2019 Remi Collet <remi@remirepo.net> - 1.0.18-0
+- update to 1.0.18
+
 * Thu Nov 15 2018 Remi Collet <remi@remirepo.net> - 1.0.16-0
 - for sclo-php build (only buildtime, runtime will use
   version available in EPEL)
